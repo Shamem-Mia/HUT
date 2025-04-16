@@ -184,8 +184,16 @@ const App = () => {
         <Route path="/developer-info" element={<DeveloperDescriptionPage />} />
         <Route path="/shop-owner-confirmation" element={<ShopOwnConfPage />} />
         <Route path="/admin/shops/:shopId/edit" element={<AdminShopEdit />} />
-        <Route path="/profile" element={<ProfilePage />} />
-
+        <Route
+          path="/profile"
+          element={
+            authUser || guestKey ? (
+              <ProfilePage />
+            ) : (
+              <Navigate to="/login" state={{ from: "/profile" }} />
+            )
+          }
+        />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

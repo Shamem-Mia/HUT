@@ -3,14 +3,16 @@ import { useAuthStore } from "../stores/useAuthStore";
 import { axiosInstance } from "../context/axiosInstance";
 import { toast } from "react-hot-toast";
 import { Edit, User, Mail, Phone, MapPin, Calendar, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
   const { authUser, setAuthUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     phone: "",
+    role: "",
     address: "",
     dateOfBirth: "",
   });
@@ -19,9 +21,10 @@ const ProfilePage = () => {
   useEffect(() => {
     if (authUser) {
       setFormData({
-        name: authUser.name || "",
+        fullName: authUser.fullName || "",
         email: authUser.email || "",
         phone: authUser.phone || "",
+        role: authUser.role || "",
         address: authUser.address || "",
         dateOfBirth: authUser.dateOfBirth?.split("T")[0] || "",
       });
@@ -38,7 +41,11 @@ const ProfilePage = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const { data } = await axiosInstance.put("/users/profile", formData);
+      console.log("formData", formData);
+
+      const { data } = await axiosInstance.put("/users/edit-profile", formData);
+      console.log("data:", data);
+
       setAuthUser(data.user);
       toast.success("Profile updated successfully");
       setIsEditing(false);
@@ -73,7 +80,9 @@ const ProfilePage = () => {
                 </button>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-white">{authUser.name}</h1>
+            <h1 className="text-2xl font-bold text-white">
+              {authUser.fullName}
+            </h1>
             <p className="text-blue-100">{authUser.email}</p>
           </div>
 
@@ -95,9 +104,9 @@ const ProfilePage = () => {
                       </div>
                       <input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="fullName"
+                        name="fullName"
+                        value={formData.fullName}
                         onChange={handleInputChange}
                         className="pl-10 w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
@@ -219,7 +228,7 @@ const ProfilePage = () => {
                     <User className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
                     <div>
                       <p className="text-sm text-gray-500">Full Name</p>
-                      <p className="font-medium">{authUser.name}</p>
+                      <p className="font-medium">{authUser.fullName}</p>
                     </div>
                   </div>
 
@@ -237,6 +246,18 @@ const ProfilePage = () => {
                       <p className="text-sm text-gray-500">Phone Number</p>
                       <p className="font-medium">
                         {authUser.phone || "Not provided"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* role */}
+
+                  <div className="flex items-start">
+                    <User className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-500">Role</p>
+                      <p className="font-medium">
+                        {authUser.role || "Not provided"}
                       </p>
                     </div>
                   </div>
@@ -293,9 +314,14 @@ const ProfilePage = () => {
                     Last changed 3 months ago
                   </p>
                 </div>
-                <button className="text-sm font-medium text-blue-600 hover:text-blue-500">
-                  Change Password
-                </button>
+                <div className="border-t pt-4">
+                  <Link
+                    to="/forgot-password"
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    Change Password
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

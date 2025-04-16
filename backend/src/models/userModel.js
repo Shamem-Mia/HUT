@@ -40,6 +40,17 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "shop-owner", "admin"],
       default: "user",
     },
+    phone: {
+      type: String,
+      default: "",
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+    dateOfBirth: {
+      type: Date,
+    },
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
