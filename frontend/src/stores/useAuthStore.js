@@ -87,9 +87,7 @@ export const useAuthStore = create((set) => ({
         await axiosInstance.post("/auth/logout");
         set({ authUser: null });
         toast.success("Logged out successfully");
-        if (localStorage.getItem("guestKey")) {
-          localStorage.removeItem("guestKey");
-        }
+
         navigate("/login");
       } else {
         toast.error("Not logged out");

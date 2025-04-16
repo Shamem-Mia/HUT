@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/useAuthStore";
 import { v4 as uuidv4 } from "uuid";
+import { getGuestKey } from "../context/guestUser.js";
 
 const LoginPage = () => {
   const { loading, error, login } = useAuthStore();
@@ -15,9 +16,14 @@ const LoginPage = () => {
   };
 
   const handleGuestLogin = () => {
-    const guestKey = uuidv4();
-    localStorage.setItem("guestKey", guestKey);
-    navigate("/");
+    const userGuestKey = getGuestKey();
+    if (userGuestKey) {
+      navigate("/");
+    } else {
+      const guestKey = uuidv4();
+      localStorage.setItem("guestKey", guestKey);
+      navigate("/");
+    }
   };
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
@@ -134,28 +140,28 @@ const LoginPage = () => {
         <div className="grid grid-cols-2 gap-4 h-full">
           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
             <img
-              src="./hut_logo.png"
+              src="./hut.png"
               alt="HUT Logo"
               className="w-full h-full object-contain p-4"
             />
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
             <img
-              src="./hut_logo.png"
+              src="./hut.png"
               alt="HUT Logo"
               className="w-full h-full object-contain p-4"
             />
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
             <img
-              src="./hut_logo.png"
+              src="./hut.png"
               alt="HUT Logo"
               className="w-full h-full object-contain p-4"
             />
           </div>
           <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 transform hover:-translate-y-1">
             <img
-              src="./hut_logo.png"
+              src="./hut.png"
               alt="HUT Logo"
               className="w-full h-full object-contain p-4"
             />

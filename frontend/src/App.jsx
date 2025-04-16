@@ -30,6 +30,7 @@ import AboutPage from "./pages/AboutPage";
 import DeveloperDescriptionPage from "./pages/DeveloperDescriptionPage";
 import ShopOwnConfPage from "./pages/ShopOwnConfPage";
 import AdminShopEdit from "./pages/AdminShopEdit";
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -89,13 +90,14 @@ const App = () => {
         />
         <Route
           path="/login"
-          element={!authUser && !guestKey ? <LoginPage /> : <Navigate to="/" />}
+          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
         />
 
         <Route
           path="/register"
           element={!authUser ? <RegisterPage /> : <Navigate to="/" />}
         />
+
         <Route path="/verify-email" element={<VerifyEmailPage />} />
 
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -130,7 +132,6 @@ const App = () => {
 
         <Route path="/go-to-hut" element={<FoodMenuPage />} />
 
-        <Route path="*" element={<NotFoundPage />} />
         <Route path="/shop/:id/food-items" element={<ShopFoodItemsPage />} />
         <Route path="/order" element={<OrderPage />} />
         <Route path="/payment" element={<PaymentPage />} />
@@ -183,6 +184,9 @@ const App = () => {
         <Route path="/developer-info" element={<DeveloperDescriptionPage />} />
         <Route path="/shop-owner-confirmation" element={<ShopOwnConfPage />} />
         <Route path="/admin/shops/:shopId/edit" element={<AdminShopEdit />} />
+        <Route path="/profile" element={<ProfilePage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   );
