@@ -158,9 +158,7 @@ const ShopDetailsCard = ({ shop, refreshShopData }) => {
                   ({shop.sellDays || 0} days)
                 </p>
               </div>
-              <p className="text-2xl font-bold">
-                {shop.totalSellPrice || 0} tk
-              </p>
+              <p className="text-lg font-bold">{shop.totalSellPrice || 0} tk</p>
 
               <div className="text-center flex flex-col items-center pt-3">
                 <button
@@ -173,7 +171,7 @@ const ShopDetailsCard = ({ shop, refreshShopData }) => {
             </div>
             <div className="text-center">
               <p className="text-sm font-medium">Contact</p>
-              <p className="text-2xl font-semibold py-5">
+              <p className="text-lg font-semibold py-5">
                 {"0" + shop.contactNumber}
               </p>
             </div>

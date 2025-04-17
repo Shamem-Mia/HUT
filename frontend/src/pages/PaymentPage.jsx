@@ -404,8 +404,11 @@ const PaymentPage = () => {
                       </li>
                       <li className="flex items-start">
                         <span className="inline-block mr-2">4.</span>
-                        Use <span className="font-bold mx-1">ORDER</span> as
-                        reference
+                        <div className=" text-lg">
+                          Use <span className="font-bold mx-1">HUT ORDER</span>{" "}
+                          as
+                          <span className="font-bold mx-1">Reference</span>
+                        </div>
                       </li>
                     </ul>
                   </div>
