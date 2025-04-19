@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { axiosInstance } from "../context/axiosInstance";
-import { MapPin, Clock, CheckCircle, User } from "lucide-react";
+import { MapPin, Clock, CheckCircle, User, CreditCard } from "lucide-react";
 import toast from "react-hot-toast";
 import DeliverySearchByPin from "../components/DeliverySearchByPin";
 
@@ -18,7 +18,17 @@ const ShopDeliveries = () => {
     }
 
     try {
-      await axiosInstance.put(`/deliveries/${deliveryId}/verify`, { pin });
+      const deliveryToVerify = deliveries.find((d) => d._id === deliveryId);
+      if (!deliveryToVerify) {
+        toast.error("Delivery not found");
+        return;
+      }
+      console.log("deliveryToVerify", deliveryToVerify);
+
+      await axiosInstance.put(`/deliveries/${deliveryId}/verify`, {
+        pin,
+        shopId: deliveryToVerify.shop,
+      });
       setDeliveries((prevDeliveries) =>
         prevDeliveries.map((d) =>
           d._id === deliveryId ? { ...d, status: "delivered" } : d
@@ -179,6 +189,34 @@ const ShopDeliveries = () => {
                         <br />
                         {delivery.deliveryDetails?.deliveryTime}
                       </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Payment Information Section */}
+                <div className="flex items-start">
+                  <CreditCard size={18} className="text-orange-500 mt-1 mr-2" />
+                  <div>
+                    <h3 className="font-medium text-gray-800">
+                      Payment Information
+                    </h3>
+                    <div className="mt-1 text-sm text-gray-600 space-y-1">
+                      <p>
+                        <span className="font-medium">Method:</span>{" "}
+                        {delivery.payment?.method || "N/A"}
+                      </p>
+                      {delivery.payment?.paymentNumber && (
+                        <p>
+                          <span className="font-medium">Number:</span> 0
+                          {delivery.payment.paymentNumber}
+                        </p>
+                      )}
+                      {delivery.payment?.transactionId && (
+                        <p>
+                          <span className="font-medium">Transaction ID:</span>{" "}
+                          {delivery.payment.transactionId}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -37,12 +37,16 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "shop-owner", "admin"],
+      enum: ["user", "shop-owner", "admin", "delivery-man"],
       default: "user",
     },
     phone: {
       type: String,
       default: "",
+    },
+    deliveredCoin: {
+      type: Number,
+      default: 0,
     },
     address: {
       type: String,

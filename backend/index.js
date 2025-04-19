@@ -12,6 +12,7 @@ import deliveryRouter from "./src/routes/deliveryRoutes.js";
 import { startDeliveryCleanupJob } from "./src/libs/deliveryCleanupJob.js";
 import { startShopDailyUpdate } from "./src/libs/shopDailyUpdate.js";
 import path from "path";
+import deliveryManRouter from "./src/routes/deliveryManRouter.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -41,6 +42,7 @@ app.use("/api/owners", ownerRouter);
 app.use("/api/shops", shopRouter);
 app.use("/api/food-items", foodItemRouter);
 app.use("/api/deliveries", deliveryRouter);
+app.use("/api/delivery-man", deliveryManRouter);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));

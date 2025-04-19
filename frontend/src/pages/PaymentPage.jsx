@@ -87,7 +87,7 @@ const PaymentPage = () => {
     }
 
     if (!authUser && !userGuestKey) {
-      return navigate("/guest-entry");
+      return navigate("/login");
     }
 
     try {
@@ -97,11 +97,13 @@ const PaymentPage = () => {
         payment: {
           method: paymentMethod,
           amount: totalPrice,
+          paymentNumber: mobileNumber,
           transactionId,
         },
         shop: orderedItems[0].shop,
         status: "pending",
         deliveryCharge: deliveryCharge,
+        selfDelivery: shopDetails.selfDelivery,
       };
 
       if (!authUser && userGuestKey) {

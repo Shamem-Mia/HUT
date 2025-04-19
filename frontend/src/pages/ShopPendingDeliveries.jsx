@@ -8,6 +8,7 @@ import {
   XCircle,
   User,
   Package,
+  CreditCard,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -129,6 +130,63 @@ const ShopPendingDeliveries = () => {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Payment Information */}
+              <div className="px-6 py-4 bg-white border-t border-orange-100">
+                <h3 className="font-medium text-orange-700 text-lg flex items-center mb-3">
+                  <CreditCard className="w-5 h-5 mr-2 text-orange-500" />
+                  Payment Details
+                </h3>
+
+                {delivery.payment ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Payment Method */}
+                    <div className="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                      <p className="text-sm font-medium text-amber-700">
+                        Payment Method
+                      </p>
+                      <p className="text-gray-800 capitalize">
+                        {delivery.payment.method || "Cash on Delivery"}
+                      </p>
+                    </div>
+
+                    {/* Payment Number - only show if online payment */}
+                    {delivery.payment.method !== "cash" && (
+                      <div className="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <p className="text-sm font-medium text-amber-700">
+                          {delivery.payment.method === "nagad"
+                            ? "Nagad"
+                            : delivery.payment.method === "bkash"
+                            ? "Bkash"
+                            : "Payment"}{" "}
+                          Number
+                        </p>
+                        <p className="text-gray-800">
+                          {delivery.payment.paymentNumber
+                            ? `0${delivery.payment.paymentNumber}`
+                            : "N/A"}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Transaction ID */}
+                    {delivery.payment.transactionId && (
+                      <div className="bg-amber-50 p-3 rounded-lg border border-amber-100 md:col-span-2">
+                        <p className="text-sm font-medium text-amber-700">
+                          Transaction ID
+                        </p>
+                        <p className="text-gray-800 font-mono break-all">
+                          {delivery.payment.transactionId}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 italic">
+                    No payment information available
+                  </p>
+                )}
               </div>
 
               {/* Delivery Information */}

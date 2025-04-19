@@ -31,6 +31,11 @@ import DeveloperDescriptionPage from "./pages/DeveloperDescriptionPage";
 import ShopOwnConfPage from "./pages/ShopOwnConfPage";
 import AdminShopEdit from "./pages/AdminShopEdit";
 import ProfilePage from "./pages/ProfilePage";
+import AllApprovedDeliveries from "./pages/AllApprovedDeliveries";
+import AllPendingDeliveries from "./pages/AllPendingDeliveries";
+import GetDeliveryManRequestsAdmin from "./pages/GetDeliveryManRequestsAdmin";
+import DeliveryManRequest from "./pages/DeliveryManRequest";
+import DeliveryManDeliveries from "./pages/DeliveryManDeliveries";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -119,7 +124,11 @@ const App = () => {
         <Route
           path="/get-shop-ownership-request"
           element={
-            authUser ? <AdminShopRequestsPage /> : <Navigate to="/login" />
+            authUser && authUser.role === "admin" ? (
+              <AdminShopRequestsPage />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
 
@@ -127,7 +136,14 @@ const App = () => {
 
         <Route
           path="/owner-dashboard"
-          element={authUser ? <ShopOwnerDashboard /> : <Navigate to="/login" />}
+          element={
+            authUser &&
+            (authUser.role === "shop-owner" || authUser.role === "admin") ? (
+              <ShopOwnerDashboard />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
         />
 
         <Route path="/go-to-hut" element={<FoodMenuPage />} />
@@ -194,6 +210,56 @@ const App = () => {
             )
           }
         />
+        <Route
+          path="/approved/all-deliveries-admin"
+          element={
+            authUser &&
+            (authUser.role === "admin" || authUser.role === "delivery-man") ? (
+              <AllApprovedDeliveries />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/pending/all-deliveries-admin"
+          element={
+            authUser &&
+            (authUser.role === "admin" || authUser.role === "delivery-man") ? (
+              <AllPendingDeliveries />
+            ) : (
+              <Navigate to="/unauthorized" />
+            )
+          }
+        />
+        <Route
+          path="/approved/delivery-man-deliveries"
+          element={
+            authUser &&
+            (authUser.role === "admin" || authUser.role === "delivery-man") ? (
+              <DeliveryManDeliveries />
+            ) : (
+              <Navigate to="/unauthorized" />
+            )
+          }
+        />
+        <Route
+          path="/pending/delivery-man-request"
+          element={
+            authUser && authUser.role === "admin" ? (
+              <GetDeliveryManRequestsAdmin />
+            ) : (
+              <Navigate to="/unauthorized" />
+            )
+          }
+        />
+        <Route
+          path="/delivery-man-request"
+          element={
+            authUser ? <DeliveryManRequest /> : <Navigate to="/unauthorized" />
+          }
+        />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

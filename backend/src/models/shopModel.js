@@ -94,6 +94,11 @@ const shopSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    selfDelivery: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
     lastResetDate: { type: Date },
     deliveryCharge: {
       type: [],

@@ -156,9 +156,8 @@ export const verifyDelivery = async (req, res) => {
   try {
     const delivery = await Delivery.findOne({
       _id: req.params.id,
-      shop: req.user.shop,
+      shop: req.body.shopId,
     });
-
     if (!delivery) {
       return res.status(404).json({ message: "Delivery not found" });
     }
@@ -167,14 +166,23 @@ export const verifyDelivery = async (req, res) => {
       return res.status(400).json({ message: "Invalid PIN" });
     }
 
-    const existingShop = await Shop.findOne({ _id: req.user.shop });
+    const existingShop = await Shop.findOne({ _id: req.body.shopId });
     if (!existingShop) {
       return res.status(404).json({ message: "shop not found!" });
+    }
+    const existingUser = await User.findOne({ email: req.user.email });
+
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found!" });
     }
 
     existingShop.totalSellPrice =
       existingShop.totalSellPrice + delivery.payment.amount;
     await existingShop.save();
+
+    // Update user's delivered coin count
+    existingUser.deliveredCoin = (existingUser.deliveredCoin || 0) + 1;
+    await existingUser.save();
 
     delivery.status = "delivered";
     delivery.verifiedAt = new Date();
@@ -233,10 +241,137 @@ export const getDeliveryByPin = async (req, res) => {
       "fullName email",
       "name email"
     );
-    console.log("user:", user);
 
     res.status(200).json({ delivery, user });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllDeliveriesForAdminAndBoy = async (req, res) => {
+  try {
+    const { search, shop, sort } = req.query;
+
+    // Build query
+    const query = {
+      status: "pending",
+      selfDelivery: false,
+    };
+
+    // Add search filter
+    if (search) {
+      query.$or = [
+        {
+          "deliveryDetails.contactNumber": { $regex: search, $options: "i" },
+        },
+        { "payment.transactionId": { $regex: search, $options: "i" } },
+        { "user.name": { $regex: search, $options: "i" } },
+        { "shop.shopName": { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Add shop filter
+    if (shop && shop !== "all") {
+      query["shop.shopName"] = shop;
+    }
+
+    // Build sort
+    let sortOption = { createdAt: -1 }; // Default: newest first
+    if (sort === "oldest") sortOption = { createdAt: 1 };
+    if (sort === "amount-high") sortOption = { "payment.amount": -1 };
+    if (sort === "amount-low") sortOption = { "payment.amount": 1 };
+
+    const deliveries = await Delivery.find(query)
+      .populate("user", "name phone")
+      .populate("shop", "shopName")
+      .sort(sortOption);
+
+    res.json({ deliveries });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const getApproveDeliveriesByAdminAndBoy = async (req, res) => {
+  try {
+    const { search, status, shop, sort } = req.query;
+
+    // Build query
+    const query = {
+      status: { $in: ["approved", "delivered"] },
+      selfDelivery: false,
+    };
+    // Status filter
+    if (status && status !== "all") {
+      query.status = status;
+    }
+    // Add search filter
+    if (search) {
+      query.$or = [
+        { "deliveryDetails.contactNumber": { $regex: search, $options: "i" } },
+        { "payment.transactionId": { $regex: search, $options: "i" } },
+        { "user.name": { $regex: search, $options: "i" } },
+        { "shop.shopName": { $regex: search, $options: "i" } },
+        { deliveryPin: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Add shop filter
+    if (shop && shop !== "all") {
+      query["shop.shopName"] = shop;
+    }
+
+    // Build sort
+    let sortOption = { createdAt: -1 }; // Default: newest first
+    if (sort === "oldest") sortOption = { createdAt: 1 };
+    if (sort === "amount-high") sortOption = { "payment.amount": -1 };
+    if (sort === "amount-low") sortOption = { "payment.amount": 1 };
+
+    const deliveries = await Delivery.find(query)
+      .populate("user", "name phone")
+      .populate("shop", "shopName")
+      .sort(sortOption);
+
+    res.json({ deliveries });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const approveDeliveriesByAdminAndBoy = async (req, res) => {
+  try {
+    const delivery = await Delivery.findById(req.params.id);
+    if (!delivery) {
+      return res.status(404).json({ message: "Delivery not found" });
+    }
+
+    const deliveryPin = Math.floor(1000 + Math.random() * 9000);
+    delivery.status = "approved";
+    delivery.deliveryPin = deliveryPin;
+    delivery.deliveryManId = req?.user?._id;
+    await delivery.save();
+
+    res.json({
+      success: true,
+      message: "Delivery approved successfully",
+      delivery,
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+export const deleteDeliveriesByAdminAndBoy = async (req, res) => {
+  try {
+    const delivery = await Delivery.findByIdAndDelete(req.params.id);
+    if (!delivery) {
+      return res.status(404).json({ message: "Delivery not found" });
+    }
+    res.json({
+      success: true,
+      message: "Delivery rejected successfully",
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

@@ -76,6 +76,10 @@ const deliverySchema = new mongoose.Schema(
         required: true,
         min: 0,
       },
+      paymentNumber: {
+        type: Number,
+        required: true,
+      },
       transactionId: {
         type: String,
         required: true,
@@ -89,7 +93,15 @@ const deliverySchema = new mongoose.Schema(
     },
     guestKey: {
       type: String,
-      unique: true,
+    },
+    deliveryManId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    selfDelivery: {
+      type: Boolean,
+      default: true,
     },
     status: {
       type: String,

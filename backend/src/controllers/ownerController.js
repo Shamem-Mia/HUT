@@ -11,6 +11,7 @@ export const shopOwnershipRequest = async (req, res) => {
       contactNumber,
       BkashNumber,
       NagadNumber,
+      selfDelivery,
       additionalInfo,
     } = req.body;
     const userId = req.user._id;
@@ -44,6 +45,7 @@ export const shopOwnershipRequest = async (req, res) => {
       contactNumber,
       BkashNumber,
       NagadNumber,
+      selfDelivery,
       additionalInfo: additionalInfo || "",
       owner: userId,
       status: "pending",
@@ -60,46 +62,6 @@ export const shopOwnershipRequest = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// export const approveShopOwnerRequest = async (req, res) => {
-//   try {
-//     // Check if user is admin
-//     if (req.user.role !== "admin") {
-//       return res.status(403).json({ message: "Unauthorized" });
-//     }
-
-//     const shop = await Shop.findById(req.params.shopId);
-//     if (!shop) {
-//       return res.status(404).json({ message: "Shop not found" });
-//     }
-
-//     if (shop.status !== "pending") {
-//       return res.status(400).json({ message: "Shop is not pending approval" });
-//     }
-
-//     // Get and increment the counter atomically
-//     const counter = await ShopCounter.findOneAndUpdate(
-//       { name: "shopPin" },
-//       { $inc: { seq: 1 } },
-//       { new: true, upsert: true }
-//     );
-
-//     // Calculate the PIN (starting from 56200)
-//     const pin = 56200 + counter.seq;
-
-//     // Update shop status and assign PIN
-//     shop.status = "approved";
-//     shop.shopPin = pin;
-//     await shop.save();
-
-//     // Update user role
-//     await User.findByIdAndUpdate(shop.owner, { role: "shop-owner" });
-
-//     res.json({ message: "Shop approved successfully", shop });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
 
 export const getShopOwnershipRequests = async (req, res) => {
   try {

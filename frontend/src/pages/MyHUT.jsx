@@ -29,19 +29,26 @@ const MyHUT = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {/* Home Card */}
           <Link
-            to="/"
+            to={authUser?.role === "user" ? "/delivery-man-request" : "/"}
             className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-orange-500 hover:border-orange-600"
           >
             <div className="flex items-center">
               <div className="p-3 rounded-full bg-orange-100 text-orange-600 mr-4">
                 <Home size={24} />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Home</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {authUser?.role === "user" ? "Request for Job" : "Home"}
+              </h2>
             </div>
-            <p className="mt-2 text-gray-600">Return to homepage</p>
+            <p className="mt-2 text-gray-600">
+              {authUser?.role === "user"
+                ? "Apply as a delivery man"
+                : "Return to homepage"}
+            </p>
           </Link>
 
           {/* Shop Owner Cards */}
+
           {authUser?.role === "shop-owner" && (
             <>
               <Link
@@ -60,38 +67,69 @@ const MyHUT = () => {
                   Manage your shop activities
                 </p>
               </Link>
-
-              <Link
-                to="/shop-pending-deliveries"
-                className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-amber-500 hover:border-amber-600"
-              >
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-amber-100 text-amber-600 mr-4">
-                    <Clock size={24} />
-                  </div>
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    Pending Deliveries
-                  </h2>
-                </div>
-                <p className="mt-2 text-gray-600">Review and approve orders</p>
-              </Link>
-
-              <Link
-                to="/shop-deliveries"
-                className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-green-500 hover:border-green-600"
-              >
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                    <Package size={24} />
-                  </div>
-                  <h2 className="text-xl font-semibold text-gray-800">
-                    All Deliveries
-                  </h2>
-                </div>
-                <p className="mt-2 text-gray-600">View all shop deliveries</p>
-              </Link>
             </>
           )}
+          {authUser &&
+            (authUser.role === "shop-owner" ||
+              authUser.role === "admin" ||
+              authUser.role === "delivery-man") && (
+              <>
+                <Link
+                  to={
+                    authUser.role === "shop-owner"
+                      ? "/shop-pending-deliveries"
+                      : authUser.role === "admin" ||
+                        authUser.role === "delivery-man"
+                      ? "/pending/all-deliveries-admin"
+                      : ""
+                  }
+                  className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-amber-500 hover:border-amber-600"
+                >
+                  <div className="flex items-center">
+                    <div className="p-3 rounded-full bg-amber-100 text-amber-600 mr-4">
+                      <Clock size={24} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      All Pending Deliveries
+                    </h2>
+                  </div>
+                  <p className="mt-2 text-gray-600">
+                    Review and approve orders
+                  </p>
+                </Link>
+
+                <Link
+                  to={
+                    authUser.role === "shop-owner"
+                      ? "/shop-deliveries"
+                      : authUser.role === "admin"
+                      ? "/approved/all-deliveries-admin"
+                      : authUser.role === "delivery-man"
+                      ? "/approved/delivery-man-deliveries"
+                      : ""
+                  }
+                  className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-green-500 hover:border-green-600"
+                >
+                  <div className="flex items-center">
+                    <div className="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                      <Package size={24} />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {authUser.role === "shop-owner"
+                        ? "Verify Delivery"
+                        : authUser.role === "admin"
+                        ? "All Delivery to verify"
+                        : authUser.role === "delivery-man"
+                        ? "Verify Your delivery"
+                        : ""}
+                    </h2>
+                  </div>
+                  <p className="mt-2 text-gray-600">
+                    View all deliveries to verify
+                  </p>
+                </Link>
+              </>
+            )}
 
           {/* Delivery History Card */}
           <Link
@@ -106,7 +144,6 @@ const MyHUT = () => {
             </div>
             <p className="mt-2 text-gray-600">Track your order history</p>
           </Link>
-
           {/* Profile Card */}
           <Link
             to="/profile"
@@ -122,6 +159,23 @@ const MyHUT = () => {
             </div>
             <p className="mt-2 text-gray-600">Manage your account settings</p>
           </Link>
+          {/* delivery man request */}
+          {authUser.role === "admin" && (
+            <Link
+              to="/pending/delivery-man-request"
+              className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-red-500 hover:border-red-600"
+            >
+              <div className="flex items-center">
+                <div className="p-3 rounded-full bg-red-100 text-red-600 mr-4">
+                  <User size={24} />
+                </div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Pending Job
+                </h2>
+              </div>
+              <p className="mt-2 text-gray-600">Accept or Reject Job</p>
+            </Link>
+          )}
         </div>
 
         {/* Content Area */}

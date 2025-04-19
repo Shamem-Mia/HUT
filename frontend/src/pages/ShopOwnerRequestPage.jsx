@@ -16,6 +16,7 @@ const ShopOwnerRequestPage = () => {
     contactNumber: "",
     BkashNumber: "",
     NagadNumber: "",
+    selfDelivery: true,
     additionalInfo: "",
   });
 
@@ -242,6 +243,32 @@ const ShopOwnerRequestPage = () => {
                     {errors.localAreas}
                   </p>
                 )}
+              </div>
+
+              <div className="mt-4 mb-6">
+                {/* Self Delivery Checkbox */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="selfDelivery"
+                    name="selfDelivery"
+                    checked={formData.selfDelivery}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        selfDelivery: e.target.checked,
+                      })
+                    }
+                    className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                  />
+                  <label
+                    htmlFor="selfDelivery"
+                    className="text-sm text-gray-700"
+                  >
+                    We will provide self delivery service (আমাদের প্রডাক্ট আমরা
+                    নিজেই ডেলিভারি দিবো )
+                  </label>
+                </div>
               </div>
 
               {/* Permanent Address */}

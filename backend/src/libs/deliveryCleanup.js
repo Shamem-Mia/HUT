@@ -9,9 +9,6 @@ const cleanupDeliveries = async () => {
       verifiedAt: { $lte: threeHoursAgo },
     });
 
-    // console.log(
-    //   `Cleaned up ${result.deletedCount} delivered orders older than 3 hours`
-    // );
     return result;
   } catch (err) {
     console.error("Delivery cleanup error:", err);

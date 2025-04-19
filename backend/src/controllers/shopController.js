@@ -24,7 +24,7 @@ export const getShopFromFoodItem = async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id)
       .select(
-        "shopName BkashNumber NagadNumber localAreas shopCategory contactNumber deliveryCharge"
+        "shopName BkashNumber NagadNumber localAreas shopCategory selfDelivery contactNumber deliveryCharge"
       )
       .lean();
 

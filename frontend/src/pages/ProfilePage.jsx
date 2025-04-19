@@ -2,7 +2,16 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "../stores/useAuthStore";
 import { axiosInstance } from "../context/axiosInstance";
 import { toast } from "react-hot-toast";
-import { Edit, User, Mail, Phone, MapPin, Calendar, Lock } from "lucide-react";
+import {
+  Edit,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Lock,
+  Coins,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ProfilePage = () => {
@@ -258,6 +267,17 @@ const ProfilePage = () => {
                       <p className="text-sm text-gray-500">Role</p>
                       <p className="font-medium">
                         {authUser.role || "Not provided"}
+                      </p>
+                    </div>
+                  </div>
+                  {/* coin */}
+
+                  <div className="flex items-start">
+                    <Coins className="h-5 w-5 text-gray-400 mt-0.5 mr-3" />
+                    <div>
+                      <p className="text-sm text-gray-500">Delivery Coin</p>
+                      <p className="font-medium">
+                        {authUser.deliveredCoin || "Not provided"}
                       </p>
                     </div>
                   </div>

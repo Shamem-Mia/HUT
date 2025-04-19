@@ -214,13 +214,14 @@ const Navbar = () => {
             />
           )}
 
-          {authUser && authUser.role === "shop-owner" && (
-            <NavLink
-              to="/owner-dashboard"
-              icon={<KeyIcon size={18} />}
-              text="Your shop"
-            />
-          )}
+          {authUser &&
+            (authUser.role === "shop-owner" || authUser.role === "admin") && (
+              <NavLink
+                to="/owner-dashboard"
+                icon={<KeyIcon size={18} />}
+                text="Your shop"
+              />
+            )}
 
           <button
             onClick={() => {
@@ -332,13 +333,15 @@ const Navbar = () => {
                     />
                   )}
 
-                  {authUser && authUser.role === "shop-owner" && (
-                    <NavLink
-                      to="/owner-dashboard"
-                      icon={<KeyIcon size={18} />}
-                      text="Your shop"
-                    />
-                  )}
+                  {authUser &&
+                    (authUser.role === "shop-owner" ||
+                      authUser.role === "admin") && (
+                      <NavLink
+                        to="/owner-dashboard"
+                        icon={<KeyIcon size={18} />}
+                        text="Your shop"
+                      />
+                    )}
 
                   <button
                     onClick={() => {
