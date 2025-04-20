@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 
 const OrderPage = () => {
@@ -8,9 +8,6 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const orderedItems = state?.orderedItems || [];
   const shop = state?.shop || null;
-
-  // console.log("shop", shop);
-  // console.log("orderedItems.shop:", orderedItems[0].shop);
 
   const [deliveryDetails, setDeliveryDetails] = useState({
     universityOrVillage: "",
@@ -20,6 +17,8 @@ const OrderPage = () => {
     deliveryDate: "",
     deliveryTime: "",
   });
+
+  const [timeError, setTimeError] = useState("");
 
   // Calculate totals
   const totalQuantity = orderedItems.reduce(
@@ -31,18 +30,62 @@ const OrderPage = () => {
     0
   );
 
+  const validateTime = (time) => {
+    if (!time) return false;
+
+    const [hours, minutes] = time.split(":").map(Number);
+    const totalMinutes = hours * 60 + minutes;
+
+    // Check if time is between 8:30 AM (8*60 + 30 = 510) and 10:00 PM (22*60 = 1320)
+    return totalMinutes >= 510 && totalMinutes <= 1320;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (orderedItems.length === 0) {
       toast.error("Please select items to order");
       return;
     }
+
+    // Validate all required fields
+    if (
+      !deliveryDetails.universityOrVillage ||
+      !deliveryDetails.hallOrMoholla ||
+      !deliveryDetails.roomOrIdentity ||
+      !deliveryDetails.contactNumber ||
+      !deliveryDetails.deliveryDate ||
+      !deliveryDetails.deliveryTime
+    ) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    // Validate phone number format (Bangladeshi)
+    const phoneRegex = /^01[3-9]\d{8}$/;
+    if (!phoneRegex.test(deliveryDetails.contactNumber)) {
+      toast.error(
+        "Please enter a valid Bangladeshi phone number (01XXXXXXXXX)"
+      );
+      return;
+    }
+
+    // Validate delivery time
+    if (!validateTime(deliveryDetails.deliveryTime)) {
+      setTimeError("Delivery time must be between 8:30 AM and 10:00 PM");
+      toast.error("Please select a valid delivery time (8:30 AM to 10:00 PM)");
+      return;
+    }
+
+    // Clear any previous time errors
+    setTimeError("");
 
     navigate("/payment", {
       state: {
         orderedItems,
         deliveryDetails,
         totalPrice,
+        shop,
       },
     });
   };
@@ -131,7 +174,7 @@ const OrderPage = () => {
           {/* University/Village */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              University/Village/Local Area
+              University/Village/Local Area *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -165,7 +208,7 @@ const OrderPage = () => {
           {/* Hall/Moholla */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Hall/Moholla
+              Hall/Moholla *
             </label>
             <input
               type="text"
@@ -185,7 +228,7 @@ const OrderPage = () => {
           {/* Room/Identity */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Room Number/Any Known Identity
+              Room Number/Any Known Identity *
             </label>
             <input
               type="text"
@@ -201,17 +244,18 @@ const OrderPage = () => {
               }
             />
           </div>
+
           {/* Contact Number */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Your Contact Number
+              Your Contact Number *
             </label>
             <input
               type="tel"
               required
               pattern="01[3-9]\d{8}"
               className="w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="+8801***"
+              placeholder="01XXXXXXXXX"
               value={deliveryDetails.contactNumber}
               onChange={(e) =>
                 setDeliveryDetails({
@@ -220,12 +264,15 @@ const OrderPage = () => {
                 })
               }
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Must be a valid Bangladeshi mobile number (01XXXXXXXXX)
+            </p>
           </div>
 
           {/* Delivery Date */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Delivery Date
+              Delivery Date *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -250,7 +297,7 @@ const OrderPage = () => {
           {/* Delivery Time */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Delivery Time
+              Delivery Time *
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -261,14 +308,24 @@ const OrderPage = () => {
                 required
                 className="pl-10 w-full rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 value={deliveryDetails.deliveryTime}
-                onChange={(e) =>
+                onChange={(e) => {
                   setDeliveryDetails({
                     ...deliveryDetails,
                     deliveryTime: e.target.value,
-                  })
-                }
+                  });
+                  // Clear error when user changes the time
+                  if (timeError) setTimeError("");
+                }}
+                min="08:30"
+                max="22:00"
               />
             </div>
+            {timeError && (
+              <p className="mt-1 text-sm text-red-600">{timeError}</p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Delivery hours: 8:30 AM to 10:00 PM
+            </p>
           </div>
         </div>
 
