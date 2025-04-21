@@ -49,7 +49,7 @@ const MyHUT = () => {
 
           {/* Shop Owner Cards */}
 
-          {authUser?.role === "shop-owner" && (
+          {authUser && authUser?.role === "shop-owner" && (
             <>
               <Link
                 to="/owner-dashboard"
@@ -70,16 +70,16 @@ const MyHUT = () => {
             </>
           )}
           {authUser &&
-            (authUser.role === "shop-owner" ||
-              authUser.role === "admin" ||
-              authUser.role === "delivery-man") && (
+            (authUser?.role === "shop-owner" ||
+              authUser?.role === "admin" ||
+              authUser?.role === "delivery-man") && (
               <>
                 <Link
                   to={
-                    authUser.role === "shop-owner"
+                    authUser?.role === "shop-owner"
                       ? "/shop-pending-deliveries"
-                      : authUser.role === "admin" ||
-                        authUser.role === "delivery-man"
+                      : authUser?.role === "admin" ||
+                        authUser?.role === "delivery-man"
                       ? "/pending/all-deliveries-admin"
                       : ""
                   }
@@ -100,11 +100,11 @@ const MyHUT = () => {
 
                 <Link
                   to={
-                    authUser.role === "shop-owner"
+                    authUser?.role === "shop-owner"
                       ? "/shop-deliveries"
-                      : authUser.role === "admin"
+                      : authUser?.role === "admin"
                       ? "/approved/all-deliveries-admin"
-                      : authUser.role === "delivery-man"
+                      : authUser?.role === "delivery-man"
                       ? "/approved/delivery-man-deliveries"
                       : ""
                   }
@@ -115,11 +115,11 @@ const MyHUT = () => {
                       <Package size={24} />
                     </div>
                     <h2 className="text-xl font-semibold text-gray-800">
-                      {authUser.role === "shop-owner"
+                      {authUser?.role === "shop-owner"
                         ? "Verify Delivery"
-                        : authUser.role === "admin"
+                        : authUser?.role === "admin"
                         ? "All Delivery to verify"
-                        : authUser.role === "delivery-man"
+                        : authUser?.role === "delivery-man"
                         ? "Verify Your delivery"
                         : ""}
                     </h2>
@@ -160,7 +160,7 @@ const MyHUT = () => {
             <p className="mt-2 text-gray-600">Manage your account settings</p>
           </Link>
           {/* delivery man request */}
-          {authUser.role === "admin" && (
+          {authUser?.role === "admin" && (
             <Link
               to="/pending/delivery-man-request"
               className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all border-l-4 border-red-500 hover:border-red-600"
@@ -182,14 +182,12 @@ const MyHUT = () => {
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <Outlet />
         </div>
-      </div>
-      {/* footer */}
-
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-grow">
-          <Outlet />
-        </main>
-        <Footer />
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
       </div>
     </div>
   );

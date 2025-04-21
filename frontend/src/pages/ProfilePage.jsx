@@ -65,6 +65,33 @@ const ProfilePage = () => {
     }
   };
 
+  if (!authUser) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen text-center px-4">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          You are a guest
+        </h2>
+        <p className="text-gray-600 mb-6">
+          To view your profile, please log in first and go to the home page.
+        </p>
+        <div className="flex space-x-4">
+          <Link
+            to="/login"
+            className="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition"
+          >
+            Login
+          </Link>
+          <Link
+            to="/"
+            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+          >
+            Go to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
