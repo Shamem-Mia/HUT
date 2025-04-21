@@ -48,6 +48,7 @@ const AllPendingDeliveries = () => {
       if (params.toString()) url += `?${params.toString()}`;
 
       const response = await axiosInstance.get(url);
+
       setDeliveries(response.data.deliveries || []);
     } catch (error) {
       console.error("Failed to fetch pending deliveries:", error);

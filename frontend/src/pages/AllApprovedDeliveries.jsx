@@ -94,18 +94,21 @@ const AllApprovedDeliveries = () => {
   };
 
   const calculateTimeLeft = (verifiedAt) => {
-    if (!verifiedAt) return "0h 0m";
+    if (!verifiedAt) return "0d 0h 0m";
 
-    const THREE_HOURS = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
     const timePassed = Date.now() - new Date(verifiedAt).getTime();
-    const timeLeft = THREE_HOURS - timePassed;
+    const timeLeft = SEVEN_DAYS - timePassed;
 
-    if (timeLeft <= 0) return "0h 0m"; // Already expired
+    if (timeLeft <= 0) return "0d 0h 0m"; // Already expired
 
-    const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+    const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hoursLeft = Math.floor(
+      (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
     const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
 
-    return `${hoursLeft}h ${minutesLeft}m`;
+    return `${daysLeft}d ${hoursLeft}h ${minutesLeft}m`;
   };
 
   const toggleExpandDelivery = (deliveryId) => {
@@ -118,7 +121,7 @@ const AllApprovedDeliveries = () => {
 
   // Extract unique shops and statuses for filter dropdowns
   const uniqueShops = [
-    ...new Set(deliveries.map((d) => d.shop?.shopName).filter(Boolean)),
+    ...new Map(deliveries.map((d) => [d.shop?._id, d.shop])).values(),
   ];
 
   const statusCounts = deliveries.reduce((acc, delivery) => {
@@ -198,8 +201,8 @@ const AllApprovedDeliveries = () => {
                   >
                     <option value="all">All Shops</option>
                     {uniqueShops.map((shop) => (
-                      <option key={shop} value={shop}>
-                        {shop}
+                      <option key={shop._id} value={shop._id}>
+                        {shop.shopName}
                       </option>
                     ))}
                   </select>
@@ -332,7 +335,6 @@ const AllApprovedDeliveries = () => {
                         </h2>
                       </div>
                       <div className="flex items-center sm:pr-2">
-                        {/* Timer moved here, outside the status badge */}
                         {delivery.status === "delivered" && (
                           <div className="text-xs text-white bg-black bg-opacity-20 px-2 py-1 rounded">
                             Auto-deletes in:{" "}

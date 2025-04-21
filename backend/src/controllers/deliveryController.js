@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Delivery from "../models/deliveryModel.js";
 import Shop from "../models/shopModel.js";
 import User from "../models/userModel.js";
@@ -261,22 +262,22 @@ export const getAllDeliveriesForAdminAndBoy = async (req, res) => {
     // Add search filter
     if (search) {
       query.$or = [
-        {
-          "deliveryDetails.contactNumber": { $regex: search, $options: "i" },
-        },
+        { "deliveryDetails.contactNumber": { $regex: search, $options: "i" } },
         { "payment.transactionId": { $regex: search, $options: "i" } },
         { "user.name": { $regex: search, $options: "i" } },
         { "shop.shopName": { $regex: search, $options: "i" } },
       ];
     }
 
-    // Add shop filter
-    if (shop && shop !== "all") {
-      query["shop.shopName"] = shop;
+    // Add shop filter - FIXED: now filters by _id instead of shopName
+    if (shop && shop !== "all" && mongoose.Types.ObjectId.isValid(shop)) {
+      query.shop = new mongoose.Types.ObjectId(shop);
+    } else if (shop && shop !== "all") {
+      return res.status(400).json({ message: "Invalid shop ID" });
     }
 
     // Build sort
-    let sortOption = { createdAt: -1 }; // Default: newest first
+    let sortOption = { createdAt: -1 };
     if (sort === "oldest") sortOption = { createdAt: 1 };
     if (sort === "amount-high") sortOption = { "payment.amount": -1 };
     if (sort === "amount-low") sortOption = { "payment.amount": 1 };
@@ -301,6 +302,7 @@ export const getApproveDeliveriesByAdminAndBoy = async (req, res) => {
       status: { $in: ["approved", "delivered"] },
       selfDelivery: false,
     };
+
     // Status filter
     if (status && status !== "all") {
       query.status = status;
@@ -317,12 +319,14 @@ export const getApproveDeliveriesByAdminAndBoy = async (req, res) => {
     }
 
     // Add shop filter
-    if (shop && shop !== "all") {
-      query["shop.shopName"] = shop;
+    if (shop && shop !== "all" && mongoose.Types.ObjectId.isValid(shop)) {
+      query.shop = new mongoose.Types.ObjectId(shop);
+    } else if (shop && shop !== "all") {
+      return res.status(400).json({ message: "Invalid shop ID" });
     }
 
     // Build sort
-    let sortOption = { createdAt: -1 }; // Default: newest first
+    let sortOption = { createdAt: -1 };
     if (sort === "oldest") sortOption = { createdAt: 1 };
     if (sort === "amount-high") sortOption = { "payment.amount": -1 };
     if (sort === "amount-low") sortOption = { "payment.amount": 1 };
