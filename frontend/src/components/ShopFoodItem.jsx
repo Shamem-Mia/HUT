@@ -10,16 +10,16 @@ import {
 } from "lucide-react";
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ShopFoodItem = ({ item, onSelect, initialQuantity = 0 }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
+  const navigate = useNavigate();
   const shop = item.shop;
 
   useEffect(() => {
     setQuantity(initialQuantity);
   }, [initialQuantity]);
-
-  // console.log("shop", shop);
 
   const increaseQuantity = () => {
     const newQuantity = quantity + 1;
@@ -31,6 +31,12 @@ const ShopFoodItem = ({ item, onSelect, initialQuantity = 0 }) => {
     const newQuantity = Math.max(0, quantity - 1);
     setQuantity(newQuantity);
     onSelect({ ...item, quantity: newQuantity });
+  };
+
+  const handleSeeDetails = () => {
+    navigate(`/food-item-details/${item._id}`, {
+      state: { initialQuantity: quantity, item: item },
+    });
   };
 
   if (!shop.isOpen) {
@@ -99,9 +105,18 @@ const ShopFoodItem = ({ item, onSelect, initialQuantity = 0 }) => {
           </span>
         </div>
 
-        <span className="px-1.5 py-0.5 rounded-full text-[15px] font-medium bg-blue-200 text-blue-500 shadow-md">
-          {item.category}
-        </span>
+        <div className="flex justify-between items-center mb-2">
+          <span className="px-1.5 py-0.5 rounded-full text-[15px] font-medium bg-blue-200 text-blue-500 shadow-md">
+            {item.category}
+          </span>
+          <button
+            onClick={handleSeeDetails}
+            className="text-sm text-blue-600 hover:underline font-medium ml-4"
+          >
+            See Details
+          </button>
+        </div>
+
         <p className="text-gray-500 text-xs line-clamp-2 mb-3">
           {item.description}
         </p>

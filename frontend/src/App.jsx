@@ -24,7 +24,7 @@ import MyHUT from "./pages/MyHUT";
 import ShopDeliveries from "./pages/ShopDeliveries";
 import ShopPendingDeliveries from "./pages/ShopPendingDeliveries";
 import UserDeliveryHistory from "./pages/UserDeliveryHistory";
-import { getGuestKey } from "./context/guestUser";
+import { getGuestKey, isGuestUser } from "./context/guestUser";
 import UnauthorizedPage from "./pages/UnauthorizedPage";
 import AboutPage from "./pages/AboutPage";
 import DeveloperDescriptionPage from "./pages/DeveloperDescriptionPage";
@@ -36,6 +36,7 @@ import AllPendingDeliveries from "./pages/AllPendingDeliveries";
 import GetDeliveryManRequestsAdmin from "./pages/GetDeliveryManRequestsAdmin";
 import DeliveryManRequest from "./pages/DeliveryManRequest";
 import DeliveryManDeliveries from "./pages/DeliveryManDeliveries";
+import FoodItemDetailsCard from "./pages/FoodItemDetailsCard";
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -257,6 +258,16 @@ const App = () => {
           path="/delivery-man-request"
           element={
             authUser ? <DeliveryManRequest /> : <Navigate to="/unauthorized" />
+          }
+        />
+        <Route
+          path="/food-item-details/:id"
+          element={
+            authUser || guestKey ? (
+              <FoodItemDetailsCard />
+            ) : (
+              <Navigate to="/unauthorized" />
+            )
           }
         />
 
